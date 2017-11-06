@@ -21,7 +21,7 @@ def probabilities_s_and_t():
 def probabilities_s_under_t():
     """
     Calculate and print the probability table for p(S|T)
-    Therefore the probability p(T|S)*p(S)/p(T) is calculated.
+    Therefore the probability p(T=t, J, R, S=1) / p(T=t, J, R, S)  is calculated.
 
     :return:
     """
