@@ -1,98 +1,108 @@
-from itertools import product
+
+class Factor(object):
+    def __init__(self, scope, cpd):
+        self.scope = set(scope)
+        self.cpd = cpd
+
+    def _get_values_from_cpd(self):
+
+
+    def __str__(self):
+        elements = ', '.join(self.scope)
+        return 'phi({})'.format(elements)
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __mul__(self, other):
+        assert(isinstance(other, Factor))
+
+        new_scope = set(self.scope).union(other.scope)
+        return Factor(new_scope, self.cpd)
+
+    def sum_out(self, variable):
+        self.scope.remove(variable)
+
+    def values(self, variable):
+        pass
 
 
 def eliminate_var(factors, variable):
-    pass
+    factors1 = [phi for phi in factors if variable in phi.scope]
+    factors2 = [phi for phi in factors if variable not in phi.scope]
+
+    psi = factors1[0]
+    for phi in factors1[1:]:
+        psi *= phi
+
+    psi.sum_out(variable)
+    factors2.append(psi)
+    return factors2
 
 
 def variable_elimination(factors, variables):
-    pass
+    for var in variables:
+        factors = eliminate_var(factors, var)
+
+    result = factors[0]
+    for phi in factors[1:]:
+        result *= phi
+
+    return result
 
 
-def marginalization_brute_force():
-    phi = [phi_x1, phi_x2, phi_x3, phi_x4, phi_x5, phi_x6, phi_x7, phi_x8]
-
-    for fcn in phi:
-        print('{}\t{:>10}\t{:>10}'.format(fcn.__name__, round(fcn(True), 2), round(fcn(False), 2)))
-
-
-def phi_x1(x1):
-    return 0.05 if x1 else 4.95
-
-
-def phi_x2(x2):
-    return 2.5
-
-
-def phi_x3(x3):
-    return sum([phi_x1(x1) * _phi_x3_x1(x3, x1) for x1 in [True, False]])
-
-
-def phi_x4(x4):
-    return sum([phi_x1(x2) * _phi_x4_x2(x4, x2) for x2 in [True, False]])
-
-
-def phi_x5(x5):
-    return sum([phi_x2(x2) * _phi_x5_x2(x5, x2) for x2 in [True, False]])
-
-
-def phi_x6(x6):
-    return sum([phi_x8(x8) * _phi_x6_x8(x6, x8) for x8 in [True, False]])
-
-
-def phi_x7(x7):
-    return sum([phi_x5(x5) * phi_x8(x8) * _phi_x7_x5_x8(x7, x5, x8) for x5, x8 in product([True, False], [True, False])])
-
-
-def phi_x8(x8):
-    return sum([phi_x4(x4) * phi_x3(x3) * _phi_x8_x4_x3(x8, x4, x3) for x4, x3 in product([True, False], [True, False])])
-
-
-def _phi_x3_x1(x3, x1):
-    if x1:
-        return 0.25 if x3 else 4.75
-    else:
-        return 0.05 if x3 else 4.95
+cpd = {
+    frozenset({'x1': True}.items()): 0.05,
+    frozenset({'x1': False}.items()): 4.95,
+    frozenset({'x2': True}.items()): 2.5,
+    frozenset({'x2': False}.items()): 2.5,
+    frozenset({'x3': True, 'x1': True}.items()): 0.25,
+    frozenset({'x3': False, 'x1': True}.items()): 4.75,
+    frozenset({'x3': True, 'x1': False}.items()): 0.05,
+    frozenset({'x3': False, 'x1': False}.items()): 4.95,
+    frozenset({'x4': True, 'x2': True}.items()): 0.5,
+    frozenset({'x4': False, 'x2': True}.items()): 4.5,
+    frozenset({'x4': True, 'x2': False}.items()): 0.05,
+    frozenset({'x4': False, 'x2': False}.items()): 4.95,
+    frozenset({'x5': True, 'x2': True}.items()): 3.,
+    frozenset({'x5': False, 'x2': True}.items()): 2.,
+    frozenset({'x5': True, 'x2': False}.items()): 1.5,
+    frozenset({'x5': False, 'x2': False}.items()): 3.5,
+    frozenset({'x6': True, 'x8': True}.items()): 4.9,
+    frozenset({'x6': False, 'x8': True}.items()): 0.1,
+    frozenset({'x6': True, 'x8': False}.items()): 0.25,
+    frozenset({'x6': False, 'x8': False}.items()): 4.75,
+    frozenset({'x8': True, 'x4': True, 'x3': True}.items()): 5.,
+    frozenset({'x8': False, 'x4': True, 'x3': True}.items()): 0.,
+    frozenset({'x8': True, 'x4': False, 'x3': True}.items()): 5.,
+    frozenset({'x8': False, 'x4': False, 'x3': True}.items()): 0.,
+    frozenset({'x8': True, 'x4': True, 'x3': False}.items()): 5.,
+    frozenset({'x8': False, 'x4': True, 'x3': False}.items()): 0.,
+    frozenset({'x8': True, 'x4': False, 'x3': False}.items()): 5.,
+    frozenset({'x8': False, 'x4': False, 'x3': False}.items()): 0.,
+    frozenset({'x7': True, 'x5': True, 'x8': True}.items()): 4.5,
+    frozenset({'x7': False, 'x5': True, 'x8': True}.items()): 0.5,
+    frozenset({'x7': True, 'x5': False, 'x8': True}.items()): 3.5,
+    frozenset({'x7': False, 'x5': False, 'x8': True}.items()): 1.5,
+    frozenset({'x7': True, 'x5': True, 'x8': False}.items()): 4.,
+    frozenset({'x7': False, 'x5': True, 'x8': False}.items()): 1.,
+    frozenset({'x7': True, 'x5': False, 'x8': False}.items()): 0.5,
+    frozenset({'x7': False, 'x5': False, 'x8': False}.items()): 4.5,
+}
 
 
-def _phi_x4_x2(x4, x2):
-    if x2:
-        return 0.5 if x4 else 4.5
-    else:
-        return 0.05 if x4 else 4.95
-
-
-def _phi_x5_x2(x5, x2):
-    if x2:
-        return 3 if x5 else 2
-    else:
-        return 1.5 if x5 else 3.5
-
-
-def _phi_x6_x8(x6, x8):
-    if x8:
-        return 4.9 if x6 else 0.1
-    else:
-        return 0.25 if x6 else 4.75
-
-
-def _phi_x8_x4_x3(x8, x4, x3):
-    if not x4 and not x3:
-        return 0 if x8 else 5
-    else:
-        return 5 if x8 else 0
-
-
-def _phi_x7_x5_x8(x7, x5, x8):
-    if x5 and x8:
-        return 4.5 if x7 else 0.5
-    if not x5 and x8:
-        return 3.5 if x7 else 1.5
-    if x5 and not x8:
-        return 4 if x7 else 1
-    if not x5 and not x8:
-        return 0.5 if x7 else 4.5
-
+def h(query):
+    return frozenset(query.items())
 
 if __name__ == '__main__':
-    marginalization_brute_force()
+    phi_1 = Factor({'x1'}, cpd)
+    phi_13 = Factor({'x1', 'x3'}, cpd)
+    phi_2 = Factor({'x2'}, cpd)
+    phi_24 = Factor({'x2', 'x4'}, cpd)
+    phi_25 = Factor({'x2', 'x5'}, cpd)
+    phi_68 = Factor({'x6', 'x8'}, cpd)
+    phi_348 = Factor({'x3', 'x4', 'x8'}, cpd)
+    phi_578 = Factor({'x5', 'x7', 'x8'}, cpd)
+
+    factors = [phi_1, phi_2, phi_13, phi_24, phi_25, phi_68, phi_348, phi_578]
+    print(variable_elimination(factors, ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7']))

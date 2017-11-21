@@ -1,0 +1,73 @@
+{
+  "V": ["x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8"],
+  "E": [
+    ["x3", "x1"],
+    ["x4", "x2"],
+    ["x5", "x2"],
+    ["x6", "x8"],
+    ["x8", "x4"],
+    ["x4", "x3"],
+    ["x8", "x3"],
+    ["x7", "x5"],
+    ["x5", "x8"],
+    ["x4", "x8"],
+  ],
+  "Vdata": {
+    "x1" : {
+      "numoutcomes": 2,
+      "vals": ["True", "False"],
+      "parents": [],
+      "children": ["x3"],
+      "cprob": {}
+    },
+    "x2" : {
+      "numoutcomes": 2,
+      "vals": ["True", "False"],
+      "parents": [],
+      "children": ["x4", "x5"],
+      "cprob": {}
+    },
+    "x3" : {
+      "numoutcomes": 2,
+      "vals": ["True", "False"],
+      "parents": ["x1"],
+      "children": ["x8"],
+      "cprob": {}
+    },
+    "x4" : {
+      "numoutcomes": 2,
+      "vals": ["True", "False"],
+      "parents": ["x2"],
+      "children": ["x8"],
+      "cprob": {}
+    },
+    "x5" : {
+      "numoutcomes": 2,
+      "vals": ["True", "False"],
+      "parents": ["x2"],
+      "children": ["x7"],
+      "cprob": {}
+    },
+    "x6" : {
+      "numoutcomes": 2,
+      "vals": ["True", "False"],
+      "parents": ["x8"],
+      "children": [],
+      "cprob": {}
+    },
+    "x7" : {
+      "numoutcomes": 2,
+      "vals": ["True", "False"],
+      "parents": ["x5", "x8"],
+      "children": [],
+      "cprob": {}
+    },
+    "x8" : {
+      "numoutcomes": 2,
+      "vals": ["True", "False"],
+      "parents": ["x3", "x4"],
+      "children": ["x6"],
+      "cprob": {}
+    }
+  }
+}
