@@ -2,7 +2,7 @@ from libpgm.graphskeleton import GraphSkeleton
 from libpgm.nodedata import NodeData
 from libpgm.discretebayesiannetwork import DiscreteBayesianNetwork
 from libpgm.tablecpdfactorization import TableCPDFactorization
-from pprint import pprint
+from copy import deepcopy
 
 
 def eliminate_var(factors, variable):
@@ -25,7 +25,9 @@ def variable_elimination(table, variables):
     for phi in table.factorlist[1:]:
         table.factorlist[0].multiplyfactor(phi)
 
-    return table.factorlist[0]
+    factor = table.factorlist[0]
+    #table.factorlist = table.factorlist[0]
+    return factor
 
 if __name__ == '__main__':
     nd = NodeData()
@@ -37,6 +39,11 @@ if __name__ == '__main__':
     bn = DiscreteBayesianNetwork(skel, nd)
     table = TableCPDFactorization(bn)
 
-    factor = variable_elimination(table, ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7'])
+    for x in ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8']:
+        variables = ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8']
+        variables.remove(x)
+        temporary_table = deepcopy(table)
+        factor = variable_elimination(temporary_table, variables)
+        #temporary_table.condprobve({x: 'True'}, {})
 
-    pprint(factor.__dict__)
+        print('phi({}):\t{:>10}\t{:>10}'.format(x, round(factor.vals[0], 2), round(factor.vals[1], 2)))
