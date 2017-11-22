@@ -61,8 +61,8 @@
       "parents": ["x8"],
       "children": [],
       "cprob": {
-        "['True']": [4.9, 0.1],
-        "['False']": [0.25, 4.75]
+        "['True']": [4.9, 0.25],
+        "['False']": [0.1, 4.75]
       }
     },
     "x7" : {
@@ -71,10 +71,10 @@
       "parents": ["x5", "x8"],
       "children": [],
       "cprob": {
-        "['True', 'True']": [5.0, 0],
-        "['False', 'True']": [5.0, 0],
-        "['True', 'False']": [5.0, 0],
-        "['False', 'False']": [0.0, 5.0]
+        "['True', 'True']": [4.5, 0.5],
+        "['False', 'True']": [3.5, 1.5],
+        "['True', 'False']": [4.0, 1.0],
+        "['False', 'False']": [0.5, 4.5]
       }
     },
     "x8" : {
@@ -83,10 +83,10 @@
       "parents": ["x3", "x4"],
       "children": ["x6"],
       "cprob": {
-        "['True', 'True']": [4.5, 0.5],
-        "['False', 'True']": [3.5, 1.5],
-        "['True', 'False']": [4.0, 1.0],
-        "['False', 'False']": [0.5, 4.5]
+        "['True', 'True']": [5.0, 0],
+        "['False', 'True']": [5.0, 0],
+        "['True', 'False']": [5.0, 0],
+        "['False', 'False']": [0.0, 5]
       }
     }
   }
