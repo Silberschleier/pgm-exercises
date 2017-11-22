@@ -26,7 +26,7 @@ def variable_elimination(table, variables):
         table.factorlist[0].multiplyfactor(phi)
 
     factor = table.factorlist[0]
-    #table.factorlist = table.factorlist[0]
+    table.factorlist = table.factorlist[0]
     return factor
 
 if __name__ == '__main__':
@@ -39,11 +39,12 @@ if __name__ == '__main__':
     bn = DiscreteBayesianNetwork(skel, nd)
     table = TableCPDFactorization(bn)
 
+    output = ''
     for x in ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8']:
         variables = ['x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8']
         variables.remove(x)
         temporary_table = deepcopy(table)
         factor = variable_elimination(temporary_table, variables)
-        #temporary_table.condprobve({x: 'True'}, {})
 
-        print('phi({}):\t{:>10}\t{:>10}'.format(x, round(factor.vals[0], 2), round(factor.vals[1], 2)))
+        output += 'phi({}) = \t{:>10},\t{:>10}\n'.format(x, round(factor.vals[0], 2), round(factor.vals[1], 2))
+    print(output)
