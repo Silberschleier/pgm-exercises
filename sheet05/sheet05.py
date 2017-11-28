@@ -119,6 +119,12 @@ class Node(object):
         return factor_beta_pos, factor_beta_neg
 
     def pass_downward(self, message, results):
+        """
+        Pass the messages recursively downward.
+
+        :param message: The message to pass downward.
+        :param results: A dictionary to store the marginal probabilities
+        """
         factor_beta_pos, factor_beta_neg = self._sum_out(True), self._sum_out(False)
         results[self.identifier] = (factor_beta_pos * message[0], factor_beta_neg * message[1])
 
@@ -126,10 +132,14 @@ class Node(object):
             child.pass_downward(results[self.identifier], results)
 
     def compute_probalities(self):
+        """
+        Compute and print the marginal probabilites using message passing.
+        """
         message = self.pass_upward()
 
-        results = {}
-        self.pass_downward(message, results)
+        results = {1: (message[0], message[1])}
+        for child in self.children:
+            child.pass_downward(message, results)
 
         for x, prob in sorted(results.items()):
             pos = prob[0] / (prob[0] + prob[1])
