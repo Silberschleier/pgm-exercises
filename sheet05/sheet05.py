@@ -1,3 +1,4 @@
+from pprint import pprint
 
 factortable = {
     (1, 2): {
@@ -117,8 +118,23 @@ class Node(object):
 
         return factor_beta_pos, factor_beta_neg
 
-    def pass_downward(self):
-        pass
+    def pass_downward(self, message, results):
+        factor_beta_pos, factor_beta_neg = self._sum_out(True), self._sum_out(False)
+        results[self.identifier] = (factor_beta_pos * message[0], factor_beta_neg * message[1])
+
+        for child in self.children:
+            child.pass_downward(results[self.identifier], results)
+
+    def compute_probalities(self):
+        message = self.pass_upward()
+
+        results = {}
+        self.pass_downward(message, results)
+
+        for x, prob in sorted(results.items()):
+            pos = prob[0] / (prob[0] + prob[1])
+            neg = prob[1] / (prob[0] + prob[1])
+            print("X{}\t{:>10}\t{:>10}".format(x, round(pos, 4), round(neg, 4)))
 
     def __repr__(self):
         return "Node(" + str(self.identifier) + ")"
@@ -126,4 +142,4 @@ class Node(object):
 if __name__ == '__main__':
     root = Node(1, None, factortable)
     root.make_childs_from_table()
-    print(root.pass_upward())
+    root.compute_probalities()
