@@ -82,20 +82,48 @@ factortable = {
 
 
 class Node(object):
-    def __init__(self, identifier, parent):
+    def __init__(self, identifier, parent, table):
         self.identifier = identifier
         self.parent = parent
+        self.table = table
         self.children = []
+        self.upward_message = None
 
-    def make_childs_from_table(self, table):
-        self.children = [Node(child, self) for x, child in table.keys() if x == self.identifier]
+    def _sum_out(self, x):
+        if not self.parent:
+            return 1
+        values = self.table[(self.parent.identifier, self.identifier)]
+        return values[(True, x)] + values[(False, x)]
+
+    def make_childs_from_table(self):
+        """
+        Build the tree from the keys of the factor table.
+        """
+        self.children = [Node(child, self, self.table) for x, child in self.table.keys() if x == self.identifier]
         for child in self.children:
-            child.make_childs_from_table(table)
+            child.make_childs_from_table()
+
+    def pass_upward(self):
+        """
+        Calculate the upward pass message.
+
+        :return: A tuple of the positive and negative message factors.
+        """
+        factor_beta_pos, factor_beta_neg = self._sum_out(True), self._sum_out(False)
+        for child in self.children:
+            msg_child = child.pass_upward()
+            factor_beta_pos *= msg_child[0]
+            factor_beta_neg *= msg_child[1]
+
+        return factor_beta_pos, factor_beta_neg
+
+    def pass_downward(self):
+        pass
 
     def __repr__(self):
         return "Node(" + str(self.identifier) + ")"
 
 if __name__ == '__main__':
-    root = Node(1, None)
-    root.make_childs_from_table(factortable)
-    print(root)
+    root = Node(1, None, factortable)
+    root.make_childs_from_table()
+    print(root.pass_upward())
