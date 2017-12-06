@@ -83,37 +83,37 @@ def clique_potentials(cliques, pot_table, pot_variables):
     clique_potentials = {}
     for key in cliques:
         prod = 1
-        for var1, var2 in product(cliques[key], repeat=2):
-            if var1 != var2:
-                # edge is existing in the original table
-                if var2 in pot_variables[var1-1]:
-                    prod = pot_table[var1-1] * prod
+        for var in cliques[key]:
+            prod = np.multiply(prod, pot_table[var-1])
         clique_potentials.update({key: prod})
-        print(clique_potentials)
     return clique_potentials
 
-def compute_marginal(var):
-    pass
+def pass_messages(cliques, sepsets, clique_potentials):
+    updated_clique_potentials = 1
+    return updated_clique_potentials
+
+def compute_marginal(var, cliques, clique_potentials):
+    for key in cliques:
+        if var in cliques[key]:
+            return np.sum(np.sum(clique_potentials[key], axis=(0,1)), axis=0)
 
 
 pot_table, pot_variables, variables = read_data()
+
 #moralize the graph
 new_pot_variables_after_moralization = moralize(pot_variables)
-#TODO triangulate
 
 # construct junction tree from clique graph
 junction_tree = clique_graph(new_pot_variables_after_moralization)
-# TODO form junction tree
+
 # assign potentials to the cliques
 clique_potentials = clique_potentials(junction_tree['cliques'], pot_table, pot_variables)
-# TODO pass messages
-# TODO return marginals
 
-#pprint(new_pot_variables_after_moralization)
-#pprint(junction_tree['cliques'])
+# pass messages and update clique potentials
+updated_clique_potentials = pass_messages(junction_tree['cliques'], junction_tree['sepsets'], clique_potentials)
 
-#for var in range(20,60):
-    #pprint("Marginal for " + str(variables[var]) + ":")
-    #pprint(compute_marginal(var))
+#return marginals
+for var in range(20,60):
+    pprint("Marginal for " + str(variables[var]) + ": " + str(compute_marginal(var, junction_tree['cliques'], clique_potentials)))
 
 
