@@ -8,6 +8,7 @@ Created on Sat Dec  2 14:19:38 2017
 
 import h5py
 import numpy as np
+import json
 from pprint import pprint
 from itertools import product
 
@@ -20,25 +21,17 @@ def read_data():
                 pot_table.append(f[column[row_number]][:])
     
     #pprint(np.transpose(pot_table))
-    
-    
+
+    with open("pot_table.txt", 'w') as fp:
+        np.save(fp, np.array(pot_table))
     # read pot_variables data
     pot_variables = []
     with h5py.File("pot.mat") as f:
         for column in f['pot_variables']:
             for row_number in range(len(column)):            
                 pot_variables.append(f[column[row_number]][:])
-                
     #pprint(np.transpose(pot_variables))
     
-    # fill a list with variable names
-    variables = []
-    for i in range(1,21):
-        variables.append('d'+str(i))
-    for i in range(1,41):
-        variables.append('s'+str(i))
-    
-    #pprint(variables)
     
     return pot_table, pot_variables, variables
 
