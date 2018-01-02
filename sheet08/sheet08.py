@@ -53,12 +53,8 @@ def graph_cut_denoise(img):
         else:
             G.add_edge('s', (x, y), capacity=LABEL_COST)
 
-    print('Nodes: {}, Edges: {}'.format(G.number_of_nodes(), G.number_of_edges()))
     value, partition = nx.minimum_cut(G, 's', 't')
     labeled_black, labeled_white = partition
-    print(value)
-    print(labeled_black)
-    print(labeled_white)
 
     # Create output image
     result = np.zeros(img.shape, img.dtype)
@@ -75,10 +71,13 @@ if __name__ == '__main__':
     io.imshow(img_input)
     plt.show()
 
-    img_noise = add_noise(img_input, 0.1)
-    io.imshow(img_noise)
-    plt.show()
+    for m in [0.1, 0.2, 0.3, 0.4, 0.5]:
+        print('Adding {}% noise'.format(m * 100))
+        img_noise = add_noise(img_input, m)
+        io.imshow(img_noise)
+        plt.show()
 
-    img_denoise = graph_cut_denoise(img_noise)
-    io.imshow(img_denoise)
-    plt.show()
+        img_denoise = graph_cut_denoise(img_noise)
+        io.imshow(img_denoise)
+        plt.show()
+
