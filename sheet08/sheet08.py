@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 
 WHITE = 255
 BLACK = 0
-LABEL_COST = 1
+#LABEL_COST = 4    # For eight-neighbourhood
+LABEL_COST = 1.7    # For four-neighbourhood
+SEP_COST = 1
 
 
 def add_noise(img, percent):
@@ -34,7 +36,7 @@ def add_neighbourhood_edges(G, img, x, y):
         if xn < 0 or yn < 0 or xn > img.shape[0]-1 or yn > img.shape[1]-1:
             continue
 
-        cost_lambda = 1 if img[x, y] == img[xn, yn] else 0
+        cost_lambda = 0 if img[x, y] == img[xn, yn] else SEP_COST
         G.add_edge((x, y), (xn, yn), capacity=cost_lambda)
 
 
@@ -53,9 +55,19 @@ def graph_cut_denoise(img):
 
     print('Nodes: {}, Edges: {}'.format(G.number_of_nodes(), G.number_of_edges()))
     value, partition = nx.minimum_cut(G, 's', 't')
+    labeled_black, labeled_white = partition
     print(value)
-    print(partition[0])
-    print(partition[1])
+    print(labeled_black)
+    print(labeled_white)
+
+    # Create output image
+    result = np.zeros(img.shape, img.dtype)
+    for node in labeled_white:
+        if node == 't':
+            continue
+        result[node] = WHITE
+
+    return result
 
 
 if __name__ == '__main__':
@@ -67,7 +79,6 @@ if __name__ == '__main__':
     io.imshow(img_noise)
     plt.show()
 
-    graph_cut_denoise(img_noise)
-
-
-
+    img_denoise = graph_cut_denoise(img_noise)
+    io.imshow(img_denoise)
+    plt.show()
