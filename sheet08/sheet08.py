@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 
 WHITE = 255
 BLACK = 0
-#LABEL_COST = 4    # For eight-neighbourhood
-LABEL_COST = 1.7    # For four-neighbourhood
+LABEL_COST = 4    # For eight-neighbourhood
+#LABEL_COST = 1.7    # For four-neighbourhood
 SEP_COST = 1
 
 
@@ -29,7 +29,7 @@ def add_neighbourhood_edges(G, img, x, y):
     # Four-neighbourhood
     neighbours = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
     # Eight-neighbourhood
-    #neighbours.extend([(x-1, y-1), (x-1, y+1), (x+1, y-1), (x+1, y+1)])
+    neighbours.extend([(x-1, y-1), (x-1, y+1), (x+1, y-1), (x+1, y+1)])
 
     for xn, yn in neighbours:
         # Skip neighbours outside of the image
@@ -67,7 +67,7 @@ def graph_cut_denoise(img):
 
 
 if __name__ == '__main__':
-    img_input = io.imread('images/a.png')
+    img_input = io.imread('images/ex2test.png')
     io.imshow(img_input)
     plt.show()
 
