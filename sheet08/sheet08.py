@@ -14,14 +14,19 @@ SEP_COST = 1
 
 def add_noise(img, percent):
     output = np.copy(img)
-    output = np.reshape(output, (output.size, 1))
 
+    # Reshape the image, so we can pick pixels by single (unique) random numbers
+    output = np.reshape(output, (output.size, 1))
     population = random.sample(range(output.size), int(output.size * percent))
+
+    # Flip picked pixels
     for index in population:
         if output[index] == WHITE:
             output[index] = BLACK
         else:
             output[index] = WHITE
+
+    # Restore the shape and return the result
     return np.reshape(output, img.shape)
 
 
@@ -48,6 +53,8 @@ def graph_cut_denoise(img):
     # Construct the graph
     for x, y in product(range(img.shape[0]), range(img.shape[1])):
         add_neighbourhood_edges(G, img, x, y)
+
+        # Add an edge to the corresponding label
         if img[x, y] == WHITE:
             G.add_edge((x, y), 't', capacity=LABEL_COST)
         else:
@@ -56,7 +63,7 @@ def graph_cut_denoise(img):
     value, partition = nx.minimum_cut(G, 's', 't')
     labeled_black, labeled_white = partition
 
-    # Create output image
+    # Start with a black image and draw all pixels which are labeled white
     result = np.zeros(img.shape, img.dtype)
     for node in labeled_white:
         if node == 't':
